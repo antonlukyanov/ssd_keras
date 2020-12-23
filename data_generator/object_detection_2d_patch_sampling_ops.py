@@ -19,7 +19,8 @@ limitations under the License.
 from __future__ import division
 import numpy as np
 
-from data_generator.object_detection_2d_image_boxes_validation_utils import BoundGenerator, BoxFilter, ImageValidator
+from .object_detection_2d_image_boxes_validation_utils import BoundGenerator, BoxFilter, ImageValidator
+
 
 class PatchCoordinateGenerator:
     '''
@@ -196,6 +197,7 @@ class PatchCoordinateGenerator:
 
         return (patch_ymin, patch_xmin, patch_height, patch_width)
 
+
 class CropPad:
     '''
     Crops and/or pads an image deterministically.
@@ -347,6 +349,7 @@ class CropPad:
             else:
                 return image
 
+
 class Crop:
     '''
     Crops off the specified numbers of pixels from the borders of images.
@@ -387,6 +390,7 @@ class Crop:
 
         return self.crop(image, labels, return_inverter)
 
+
 class Pad:
     '''
     Pads images by the specified numbers of pixels on each side.
@@ -425,6 +429,7 @@ class Pad:
         self.pad.labels_format = self.labels_format
 
         return self.pad(image, labels, return_inverter)
+
 
 class RandomPatch:
     '''
@@ -588,6 +593,7 @@ class RandomPatch:
                 else:
                     return image, labels
 
+
 class RandomPatchInf:
     '''
     Randomly samples a patch from an image. The randomness refers to whatever
@@ -741,6 +747,7 @@ class RandomPatchInf:
                     else:
                         return image, labels
 
+
 class RandomMaxCropFixedAR:
     '''
     Crops the largest possible patch of a given fixed aspect ratio
@@ -819,6 +826,7 @@ class RandomMaxCropFixedAR:
         self.random_patch.patch_coord_generator = patch_coord_generator
         self.random_patch.labels_format = self.labels_format
         return self.random_patch(image, labels, return_inverter)
+
 
 class RandomPadFixedAR:
     '''

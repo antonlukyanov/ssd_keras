@@ -18,6 +18,7 @@ limitations under the License.
 
 import numpy as np
 
+
 def sample_tensors(weights_list, sampling_instructions, axes=None, init=None, mean=0.0, stddev=0.005):
     '''
     Can sub-sample and/or up-sample individual dimensions of the tensors in the given list

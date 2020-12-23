@@ -22,7 +22,8 @@ import numpy as np
 import cv2
 import random
 
-from data_generator.object_detection_2d_image_boxes_validation_utils import BoxFilter, ImageValidator
+from .object_detection_2d_image_boxes_validation_utils import BoxFilter, ImageValidator
+
 
 class Resize:
     '''
@@ -147,6 +148,7 @@ class ResizeRandomInterp:
         self.resize.labels_format = self.labels_format
         return self.resize(image, labels, return_inverter)
 
+
 class Flip:
     '''
     Flips images horizontally or vertically.
@@ -194,6 +196,7 @@ class Flip:
                 labels[:, [ymin, ymax]] = img_height - labels[:, [ymax, ymin]]
                 return image, labels
 
+
 class RandomFlip:
     '''
     Randomly flips images horizontally or vertically. The randomness only refers
@@ -229,6 +232,7 @@ class RandomFlip:
             return image
         else:
             return image, labels
+
 
 class Translate:
     '''
@@ -315,6 +319,7 @@ class Translate:
                 labels[:,[xmin,xmax]] = np.clip(labels[:,[xmin,xmax]], a_min=0, a_max=img_width-1)
 
             return image, labels
+
 
 class RandomTranslate:
     '''
@@ -446,6 +451,7 @@ class RandomTranslate:
         else:
             return image, labels
 
+
 class Scale:
     '''
     Scales images, i.e. zooms in or out.
@@ -530,6 +536,7 @@ class Scale:
                 labels[:,[xmin,xmax]] = np.clip(labels[:,[xmin,xmax]], a_min=0, a_max=img_width-1)
 
             return image, labels
+
 
 class RandomScale:
     '''
@@ -656,6 +663,7 @@ class RandomScale:
         else:
             return image, labels
 
+
 class Rotate:
     '''
     Rotates images counter-clockwise by 90, 180, or 270 degrees.
@@ -735,6 +743,7 @@ class Rotate:
                 labels[:,[xmax,xmin]] = labels[:,[xmin,xmax]]
 
             return image, labels
+
 
 class RandomRotate:
     '''

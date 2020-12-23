@@ -22,7 +22,8 @@ limitations under the License.
 from __future__ import division
 import numpy as np
 
-from bounding_box_utils.bounding_box_utils import iou, convert_coordinates
+from ..bounding_box_utils.bounding_box_utils import iou, convert_coordinates
+
 
 def greedy_nms(y_pred_decoded, iou_threshold=0.45, coords='corners', border_pixels='half'):
     '''
@@ -74,6 +75,7 @@ def greedy_nms(y_pred_decoded, iou_threshold=0.45, coords='corners', border_pixe
 
     return y_pred_decoded_nms
 
+
 def _greedy_nms(predictions, iou_threshold=0.45, coords='corners', border_pixels='half'):
     '''
     The same greedy non-maximum suppression algorithm as above, but slightly modified for use as an internal
@@ -91,6 +93,7 @@ def _greedy_nms(predictions, iou_threshold=0.45, coords='corners', border_pixels
         boxes_left = boxes_left[similarities <= iou_threshold] # ...so that we can remove the ones that overlap too much with the maximum box
     return np.array(maxima)
 
+
 def _greedy_nms2(predictions, iou_threshold=0.45, coords='corners', border_pixels='half'):
     '''
     The same greedy non-maximum suppression algorithm as above, but slightly modified for use as an internal
@@ -107,6 +110,7 @@ def _greedy_nms2(predictions, iou_threshold=0.45, coords='corners', border_pixel
         similarities = iou(boxes_left[:,2:], maximum_box[2:], coords=coords, mode='element-wise', border_pixels=border_pixels) # ...compare (IoU) the other left over boxes to the maximum box...
         boxes_left = boxes_left[similarities <= iou_threshold] # ...so that we can remove the ones that overlap too much with the maximum box
     return np.array(maxima)
+
 
 def decode_detections(y_pred,
                       confidence_thresh=0.01,
@@ -225,6 +229,7 @@ def decode_detections(y_pred,
 
     return y_pred_decoded
 
+
 def decode_detections_fast(y_pred,
                            confidence_thresh=0.5,
                            iou_threshold=0.45,
@@ -338,6 +343,7 @@ def decode_detections_fast(y_pred,
 
 # The functions below are for debugging, so you won't normally need them. That is,
 # unless you need to debug your model, of course.
+
 
 def decode_detections_debug(y_pred,
                             confidence_thresh=0.01,
@@ -466,6 +472,7 @@ def decode_detections_debug(y_pred,
 
     return y_pred_decoded
 
+
 def _greedy_nms_debug(predictions, iou_threshold=0.45, coords='corners', border_pixels='half'):
     '''
     The same greedy non-maximum suppression algorithm as above, but slightly modified for use as an internal
@@ -485,6 +492,7 @@ def _greedy_nms_debug(predictions, iou_threshold=0.45, coords='corners', border_
         boxes_left = boxes_left[similarities <= iou_threshold] # ...so that we can remove the ones that overlap too much with the maximum box
     return np.array(maxima)
 
+
 def get_num_boxes_per_pred_layer(predictor_sizes, aspect_ratios, two_boxes_for_ar1):
     '''
     Returns a list of the number of boxes that each predictor layer predicts.
@@ -499,6 +507,7 @@ def get_num_boxes_per_pred_layer(predictor_sizes, aspect_ratios, two_boxes_for_a
         else:
             num_boxes_per_pred_layer.append(predictor_sizes[i][0] * predictor_sizes[i][1] * len(aspect_ratios[i]))
     return num_boxes_per_pred_layer
+
 
 def get_pred_layers(y_pred_decoded, num_boxes_per_pred_layer):
     '''

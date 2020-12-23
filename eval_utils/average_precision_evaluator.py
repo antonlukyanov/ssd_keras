@@ -24,14 +24,15 @@ from tqdm import trange
 import sys
 import warnings
 
-from data_generator.object_detection_2d_data_generator import DataGenerator
-from data_generator.object_detection_2d_geometric_ops import Resize
-from data_generator.object_detection_2d_patch_sampling_ops import RandomPadFixedAR
-from data_generator.object_detection_2d_photometric_ops import ConvertTo3Channels
-from ssd_encoder_decoder.ssd_output_decoder import decode_detections
-from data_generator.object_detection_2d_misc_utils import apply_inverse_transforms
+from ..data_generator.object_detection_2d_data_generator import DataGenerator
+from ..data_generator.object_detection_2d_geometric_ops import Resize
+from ..data_generator.object_detection_2d_patch_sampling_ops import RandomPadFixedAR
+from ..data_generator.object_detection_2d_photometric_ops import ConvertTo3Channels
+from ..ssd_encoder_decoder.ssd_output_decoder import decode_detections
+from ..data_generator.object_detection_2d_misc_utils import apply_inverse_transforms
 
-from bounding_box_utils.bounding_box_utils import iou
+from ..bounding_box_utils.bounding_box_utils import iou
+
 
 class Evaluator:
     '''

@@ -19,6 +19,7 @@ limitations under the License.
 from __future__ import division
 import numpy as np
 
+
 def apply_inverse_transforms(y_pred_decoded, inverse_transforms):
     '''
     Takes a list or Numpy array of decoded predictions and applies a given list of

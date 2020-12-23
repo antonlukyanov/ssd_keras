@@ -21,6 +21,7 @@ limitations under the License.
 from __future__ import division
 import numpy as np
 
+
 def convert_coordinates(tensor, start_index, conversion, border_pixels='half'):
     '''
     Convert coordinates for axis-aligned 2D boxes between two coordinate formats.
@@ -86,6 +87,7 @@ def convert_coordinates(tensor, start_index, conversion, border_pixels='half'):
 
     return tensor1
 
+
 def convert_coordinates2(tensor, start_index, conversion):
     '''
     A matrix multiplication implementation of `convert_coordinates()`.
@@ -115,6 +117,7 @@ def convert_coordinates2(tensor, start_index, conversion):
         raise ValueError("Unexpected conversion value. Supported values are 'minmax2centroids' and 'centroids2minmax'.")
 
     return tensor1
+
 
 def intersection_area(boxes1, boxes2, coords='centroids', mode='outer_product', border_pixels='half'):
     '''
@@ -222,6 +225,7 @@ def intersection_area(boxes1, boxes2, coords='centroids', mode='outer_product', 
         side_lengths = np.maximum(0, max_xy - min_xy + d)
 
         return side_lengths[:,0] * side_lengths[:,1]
+
 
 def intersection_area_(boxes1, boxes2, coords='corners', mode='outer_product', border_pixels='half'):
     '''

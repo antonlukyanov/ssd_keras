@@ -23,7 +23,8 @@ limitations under the License.
 from __future__ import division
 import numpy as np
 
-from bounding_box_utils.bounding_box_utils import iou
+from ..bounding_box_utils.bounding_box_utils import iou
+
 
 class BoundGenerator:
     '''
@@ -75,6 +76,7 @@ class BoundGenerator:
         '''
         i = np.random.choice(self.sample_space_size, p=self.weights)
         return self.sample_space[i]
+
 
 class BoxFilter:
     '''
@@ -230,6 +232,7 @@ class BoxFilter:
                 requirements_met *= (cy >= 0.0) * (cy <= image_height-1) * (cx >= 0.0) * (cx <= image_width-1)
 
         return labels[requirements_met]
+
 
 class ImageValidator:
     '''

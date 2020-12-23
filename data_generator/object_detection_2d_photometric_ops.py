@@ -20,6 +20,7 @@ from __future__ import division
 import numpy as np
 import cv2
 
+
 class ConvertColor:
     '''
     Converts images between RGB, HSV and grayscale color spaces. This is just a wrapper
@@ -59,6 +60,7 @@ class ConvertColor:
         else:
             return image, labels
 
+
 class ConvertDataType:
     '''
     Converts images represented as Numpy arrays between `uint8` and `float32`.
@@ -85,6 +87,7 @@ class ConvertDataType:
         else:
             return image, labels
 
+
 class ConvertTo3Channels:
     '''
     Converts 1-channel and 4-channel images to 3-channel images. Does nothing to images that
@@ -106,6 +109,7 @@ class ConvertTo3Channels:
             return image
         else:
             return image, labels
+
 
 class Hue:
     '''
@@ -131,6 +135,7 @@ class Hue:
             return image
         else:
             return image, labels
+
 
 class RandomHue:
     '''
@@ -163,6 +168,7 @@ class RandomHue:
         else:
             return image, labels
 
+
 class Saturation:
     '''
     Changes the saturation of HSV images.
@@ -187,6 +193,7 @@ class Saturation:
             return image
         else:
             return image, labels
+
 
 class RandomSaturation:
     '''
@@ -222,6 +229,7 @@ class RandomSaturation:
         else:
             return image, labels
 
+
 class Brightness:
     '''
     Changes the brightness of RGB images.
@@ -244,6 +252,7 @@ class Brightness:
             return image
         else:
             return image, labels
+
 
 class RandomBrightness:
     '''
@@ -278,6 +287,7 @@ class RandomBrightness:
         else:
             return image, labels
 
+
 class Contrast:
     '''
     Changes the contrast of RGB images.
@@ -302,6 +312,7 @@ class Contrast:
             return image
         else:
             return image, labels
+
 
 class RandomContrast:
     '''
@@ -337,6 +348,7 @@ class RandomContrast:
         else:
             return image, labels
 
+
 class Gamma:
     '''
     Changes the gamma value of RGB images.
@@ -361,6 +373,7 @@ class Gamma:
             return image
         else:
             return image, labels
+
 
 class RandomGamma:
     '''
@@ -394,6 +407,7 @@ class RandomGamma:
         else:
             return image, labels
 
+
 class HistogramEqualization:
     '''
     Performs histogram equalization on HSV images.
@@ -409,6 +423,7 @@ class HistogramEqualization:
             return image
         else:
             return image, labels
+
 
 class RandomHistogramEqualization:
     '''
@@ -435,6 +450,7 @@ class RandomHistogramEqualization:
         else:
             return image, labels
 
+
 class ChannelSwap:
     '''
     Swaps the channels of images.
@@ -453,6 +469,7 @@ class ChannelSwap:
             return image
         else:
             return image, labels
+
 
 class RandomChannelSwap:
     '''

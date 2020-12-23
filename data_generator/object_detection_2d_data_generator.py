@@ -29,6 +29,7 @@ import csv
 import os
 import sys
 from tqdm import tqdm, trange
+
 try:
     import h5py
 except ImportError:
@@ -46,8 +47,9 @@ try:
 except ImportError:
     warnings.warn("'pickle' module is missing. You won't be able to save parsed file lists and annotations as pickled files.")
 
-from ssd_encoder_decoder.ssd_input_encoder import SSDInputEncoder
-from data_generator.object_detection_2d_image_boxes_validation_utils import BoxFilter
+from ..ssd_encoder_decoder.ssd_input_encoder import SSDInputEncoder
+from .object_detection_2d_image_boxes_validation_utils import BoxFilter
+
 
 class DegenerateBatchError(Exception):
     '''
@@ -56,12 +58,14 @@ class DegenerateBatchError(Exception):
     '''
     pass
 
+
 class DatasetError(Exception):
     '''
     An exception class to be raised if a anything is wrong with the dataset,
     in particular if you try to generate batches when no dataset was loaded.
     '''
     pass
+
 
 class DataGenerator:
     '''
@@ -1171,7 +1175,7 @@ class DataGenerator:
             if 'original_images' in returns: ret.append(batch_original_images)
             if 'original_labels' in returns: ret.append(batch_original_labels)
 
-            yield ret
+            yield tuple(ret)
 
     def save_dataset(self,
                      filenames_path='filenames.pkl',
