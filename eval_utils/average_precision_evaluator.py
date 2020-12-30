@@ -622,7 +622,9 @@ class Evaluator:
             # Convert the predictions list for this class into a structured array so that we can sort it by confidence.
 
             # Get the number of characters needed to store the image ID strings in the structured array.
-            num_chars_per_image_id = len(str(predictions[0][0])) + 6 # Keep a few characters buffer in case some image IDs are longer than others.
+            # Keep a few characters buffer in case some image IDs are longer than others.
+            num_chars_per_image_id = [len(str(predictions[i][0])) for i in range(len(predictions))]
+            num_chars_per_image_id = max(num_chars_per_image_id) + 1
             # Create the data type for the structured array.
             preds_data_type = np.dtype([('image_id', 'U{}'.format(num_chars_per_image_id)),
                                         ('confidence', 'f4'),
@@ -664,6 +666,13 @@ class Evaluator:
                 else:
                     gt = ground_truth[image_id]
                 gt = np.asarray(gt)
+
+                if gt.size == 0:
+                    # If the image doesn't contain any objects of ANY class,
+                    # the prediction becomes a false positive.
+                    false_pos[i] = 1
+                    continue
+
                 class_mask = gt[:,class_id_gt] == class_id
                 gt = gt[class_mask]
                 if ignore_neutral_boxes and eval_neutral_available:
