@@ -411,7 +411,7 @@ class DataGenerator:
                            'chair', 'cow', 'diningtable', 'dog',
                            'horse', 'motorbike', 'person', 'pottedplant',
                            'sheep', 'sofa', 'train', 'tvmonitor'],
-                  include_classes = 'all',
+                  include_classes='all',
                   exclude_truncated=False,
                   exclude_difficult=False,
                   ret=False,
@@ -1103,7 +1103,10 @@ class DataGenerator:
                     xmax = self.labels_format['xmax']
                     ymax = self.labels_format['ymax']
 
-                    if np.any(batch_y[i][:,xmax] - batch_y[i][:,xmin] <= 0) or np.any(batch_y[i][:,ymax] - batch_y[i][:,ymin] <= 0):
+                    if np.any(batch_y[i]) and (
+                        np.any(batch_y[i][:,xmax] - batch_y[i][:,xmin] <= 0) or
+                        np.any(batch_y[i][:,ymax] - batch_y[i][:,ymin] <= 0)
+                    ):
                         if degenerate_box_handling == 'warn':
                             warnings.warn("Detected degenerate ground truth bounding boxes for batch item {} with bounding boxes {}, ".format(i, batch_y[i]) +
                                           "i.e. bounding boxes where xmax <= xmin and/or ymax <= ymin. " +

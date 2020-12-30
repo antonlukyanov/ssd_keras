@@ -175,17 +175,17 @@ class BoxFilter:
         # Record the boxes that pass all checks here.
         requirements_met = np.ones(shape=labels.shape[0], dtype=np.bool)
 
-        if self.check_degenerate:
+        if self.check_degenerate and np.any(labels):
 
             non_degenerate = (labels[:,xmax] > labels[:,xmin]) * (labels[:,ymax] > labels[:,ymin])
             requirements_met *= non_degenerate
 
-        if self.check_min_area:
+        if self.check_min_area and np.any(labels):
 
             min_area_met = (labels[:,xmax] - labels[:,xmin]) * (labels[:,ymax] - labels[:,ymin]) >= self.min_area
             requirements_met *= min_area_met
 
-        if self.check_overlap:
+        if self.check_overlap and np.any(labels):
 
             # Get the lower and upper bounds.
             if isinstance(self.overlap_bounds, BoundGenerator):
@@ -199,7 +199,13 @@ class BoxFilter:
                 # Compute the patch coordinates.
                 image_coords = np.array([0, 0, image_width, image_height])
                 # Compute the IoU between the patch and all of the ground truth boxes.
-                image_boxes_iou = iou(image_coords, labels[:, [xmin, ymin, xmax, ymax]], coords='corners', mode='element-wise', border_pixels=self.border_pixels)
+                image_boxes_iou = iou(
+                    image_coords,
+                    labels[:, [xmin, ymin, xmax, ymax]],
+                    coords='corners',
+                    mode='element-wise',
+                    border_pixels=self.border_pixels
+                )
                 requirements_met *= (image_boxes_iou > lower) * (image_boxes_iou <= upper)
 
             elif self.overlap_criterion == 'area':
