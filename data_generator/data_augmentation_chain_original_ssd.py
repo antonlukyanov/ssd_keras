@@ -100,6 +100,7 @@ class SSDRandomCrop:
         self.random_crop.labels_format = self.labels_format
         return self.random_crop(image, labels, return_inverter)
 
+
 class SSDExpand:
     '''
     Performs the random image expansion as defined by the `train_transform_param` instructions
@@ -142,6 +143,7 @@ class SSDExpand:
     def __call__(self, image, labels=None, return_inverter=False):
         self.expand.labels_format = self.labels_format
         return self.expand(image, labels, return_inverter)
+
 
 class SSDPhotometricDistortions:
     '''
@@ -204,6 +206,7 @@ class SSDPhotometricDistortions:
             for transform in self.sequence2:
                 image, labels = transform(image, labels)
             return image, labels
+
 
 class SSDDataAugmentation:
     '''

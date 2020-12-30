@@ -84,9 +84,10 @@ class Resize:
             else:
                 return image
         else:
-            labels = np.copy(labels)
-            labels[:, [ymin, ymax]] = np.round(labels[:, [ymin, ymax]] * (self.out_height / img_height), decimals=0)
-            labels[:, [xmin, xmax]] = np.round(labels[:, [xmin, xmax]] * (self.out_width / img_width), decimals=0)
+            if np.any(labels):
+                labels = np.copy(labels)
+                labels[:, [ymin, ymax]] = np.round(labels[:, [ymin, ymax]] * (self.out_height / img_height), decimals=0)
+                labels[:, [xmin, xmax]] = np.round(labels[:, [xmin, xmax]] * (self.out_width / img_width), decimals=0)
 
             if not (self.box_filter is None):
                 self.box_filter.labels_format = self.labels_format
@@ -98,6 +99,7 @@ class Resize:
                 return image, labels, inverter
             else:
                 return image, labels
+
 
 class ResizeRandomInterp:
     '''
@@ -182,16 +184,18 @@ class Flip:
             if labels is None:
                 return image
             else:
-                labels = np.copy(labels)
-                labels[:, [xmin, xmax]] = img_width - labels[:, [xmax, xmin]]
+                if np.any(labels):
+                    labels = np.copy(labels)
+                    labels[:, [xmin, xmax]] = img_width - labels[:, [xmax, xmin]]
                 return image, labels
         else:
             image = image[::-1]
             if labels is None:
                 return image
             else:
-                labels = np.copy(labels)
-                labels[:, [ymin, ymax]] = img_height - labels[:, [ymax, ymin]]
+                if np.any(labels):
+                    labels = np.copy(labels)
+                    labels[:, [ymin, ymax]] = img_height - labels[:, [ymax, ymin]]
                 return image, labels
 
 class RandomFlip:
@@ -298,10 +302,11 @@ class Translate:
             xmax = self.labels_format['xmax']
             ymax = self.labels_format['ymax']
 
-            labels = np.copy(labels)
-            # Translate the box coordinates to the translated image's coordinate system.
-            labels[:,[xmin,xmax]] += dx_abs
-            labels[:,[ymin,ymax]] += dy_abs
+            if np.any(labels):
+                labels = np.copy(labels)
+                # Translate the box coordinates to the translated image's coordinate system.
+                labels[:,[xmin,xmax]] += dx_abs
+                labels[:,[ymin,ymax]] += dy_abs
 
             # Compute all valid boxes for this patch.
             if not (self.box_filter is None):
@@ -310,7 +315,7 @@ class Translate:
                                          image_height=img_height,
                                          image_width=img_width)
 
-            if self.clip_boxes:
+            if self.clip_boxes and np.any(labels):
                 labels[:,[ymin,ymax]] = np.clip(labels[:,[ymin,ymax]], a_min=0, a_max=img_height-1)
                 labels[:,[xmin,xmax]] = np.clip(labels[:,[xmin,xmax]], a_min=0, a_max=img_width-1)
 
@@ -422,10 +427,13 @@ class RandomTranslate:
                     # We either don't have any boxes or if we do, we will accept any outcome as valid.
                     return self.translate(image, labels)
                 else:
-                    # Translate the box coordinates to the translated image's coordinate system.
-                    new_labels = np.copy(labels)
-                    new_labels[:, [ymin, ymax]] += int(round(img_height * dy))
-                    new_labels[:, [xmin, xmax]] += int(round(img_width * dx))
+                    if np.any(labels):
+                        # Translate the box coordinates to the translated image's coordinate system.
+                        new_labels = np.copy(labels)
+                        new_labels[:, [ymin, ymax]] += int(round(img_height * dy))
+                        new_labels[:, [xmin, xmax]] += int(round(img_width * dx))
+                    else:
+                        new_labels = []
 
                     # Check if the patch is valid.
                     if self.image_validator(labels=new_labels,
@@ -436,7 +444,6 @@ class RandomTranslate:
             # If all attempts failed, return the unaltered input image.
             if labels is None:
                 return image
-
             else:
                 return image, labels
 
@@ -508,15 +515,16 @@ class Scale:
             xmax = self.labels_format['xmax']
             ymax = self.labels_format['ymax']
 
-            labels = np.copy(labels)
-            # Scale the bounding boxes accordingly.
-            # Transform two opposite corner points of the rectangular boxes using the rotation matrix `M`.
-            toplefts = np.array([labels[:,xmin], labels[:,ymin], np.ones(labels.shape[0])])
-            bottomrights = np.array([labels[:,xmax], labels[:,ymax], np.ones(labels.shape[0])])
-            new_toplefts = (np.dot(M, toplefts)).T
-            new_bottomrights = (np.dot(M, bottomrights)).T
-            labels[:,[xmin,ymin]] = np.round(new_toplefts, decimals=0).astype(np.int)
-            labels[:,[xmax,ymax]] = np.round(new_bottomrights, decimals=0).astype(np.int)
+            if np.any(labels):
+                labels = np.copy(labels)
+                # Scale the bounding boxes accordingly.
+                # Transform two opposite corner points of the rectangular boxes using the rotation matrix `M`.
+                toplefts = np.array([labels[:,xmin], labels[:,ymin], np.ones(labels.shape[0])])
+                bottomrights = np.array([labels[:,xmax], labels[:,ymax], np.ones(labels.shape[0])])
+                new_toplefts = (np.dot(M, toplefts)).T
+                new_bottomrights = (np.dot(M, bottomrights)).T
+                labels[:,[xmin,ymin]] = np.round(new_toplefts, decimals=0).astype(np.int)
+                labels[:,[xmax,ymax]] = np.round(new_bottomrights, decimals=0).astype(np.int)
 
             # Compute all valid boxes for this patch.
             if not (self.box_filter is None):
@@ -525,7 +533,7 @@ class Scale:
                                          image_height=img_height,
                                          image_width=img_width)
 
-            if self.clip_boxes:
+            if self.clip_boxes and np.any(labels):
                 labels[:,[ymin,ymax]] = np.clip(labels[:,[ymin,ymax]], a_min=0, a_max=img_height-1)
                 labels[:,[xmin,xmax]] = np.clip(labels[:,[xmin,xmax]], a_min=0, a_max=img_width-1)
 
@@ -620,22 +628,25 @@ class RandomScale:
                     # We either don't have any boxes or if we do, we will accept any outcome as valid.
                     return self.scale(image, labels)
                 else:
-                    # Scale the bounding boxes accordingly.
-                    # Transform two opposite corner points of the rectangular boxes using the rotation matrix `M`.
-                    toplefts = np.array([labels[:,xmin], labels[:,ymin], np.ones(labels.shape[0])])
-                    bottomrights = np.array([labels[:,xmax], labels[:,ymax], np.ones(labels.shape[0])])
+                    if np.any(labels):
+                        # Scale the bounding boxes accordingly.
+                        # Transform two opposite corner points of the rectangular boxes using the rotation matrix `M`.
+                        toplefts = np.array([labels[:,xmin], labels[:,ymin], np.ones(labels.shape[0])])
+                        bottomrights = np.array([labels[:,xmax], labels[:,ymax], np.ones(labels.shape[0])])
 
-                    # Compute the rotation matrix.
-                    M = cv2.getRotationMatrix2D(center=(img_width / 2, img_height / 2),
-                                                angle=0,
-                                                scale=factor)
+                        # Compute the rotation matrix.
+                        M = cv2.getRotationMatrix2D(center=(img_width / 2, img_height / 2),
+                                                    angle=0,
+                                                    scale=factor)
 
-                    new_toplefts = (np.dot(M, toplefts)).T
-                    new_bottomrights = (np.dot(M, bottomrights)).T
+                        new_toplefts = (np.dot(M, toplefts)).T
+                        new_bottomrights = (np.dot(M, bottomrights)).T
 
-                    new_labels = np.copy(labels)
-                    new_labels[:,[xmin,ymin]] = np.around(new_toplefts, decimals=0).astype(np.int)
-                    new_labels[:,[xmax,ymax]] = np.around(new_bottomrights, decimals=0).astype(np.int)
+                        new_labels = np.copy(labels)
+                        new_labels[:,[xmin,ymin]] = np.around(new_toplefts, decimals=0).astype(np.int)
+                        new_labels[:,[xmax,ymax]] = np.around(new_bottomrights, decimals=0).astype(np.int)
+                    else:
+                        new_labels = []
 
                     # Check if the patch is valid.
                     if self.image_validator(labels=new_labels,
@@ -646,7 +657,6 @@ class RandomScale:
             # If all attempts failed, return the unaltered input image.
             if labels is None:
                 return image
-
             else:
                 return image, labels
 
@@ -712,27 +722,28 @@ class Rotate:
             xmax = self.labels_format['xmax']
             ymax = self.labels_format['ymax']
 
-            labels = np.copy(labels)
-            # Rotate the bounding boxes accordingly.
-            # Transform two opposite corner points of the rectangular boxes using the rotation matrix `M`.
-            toplefts = np.array([labels[:,xmin], labels[:,ymin], np.ones(labels.shape[0])])
-            bottomrights = np.array([labels[:,xmax], labels[:,ymax], np.ones(labels.shape[0])])
-            new_toplefts = (np.dot(M, toplefts)).T
-            new_bottomrights = (np.dot(M, bottomrights)).T
-            labels[:,[xmin,ymin]] = np.round(new_toplefts, decimals=0).astype(np.int)
-            labels[:,[xmax,ymax]] = np.round(new_bottomrights, decimals=0).astype(np.int)
+            if np.any(labels):
+                labels = np.copy(labels)
+                # Rotate the bounding boxes accordingly.
+                # Transform two opposite corner points of the rectangular boxes using the rotation matrix `M`.
+                toplefts = np.array([labels[:,xmin], labels[:,ymin], np.ones(labels.shape[0])])
+                bottomrights = np.array([labels[:,xmax], labels[:,ymax], np.ones(labels.shape[0])])
+                new_toplefts = (np.dot(M, toplefts)).T
+                new_bottomrights = (np.dot(M, bottomrights)).T
+                labels[:,[xmin,ymin]] = np.round(new_toplefts, decimals=0).astype(np.int)
+                labels[:,[xmax,ymax]] = np.round(new_bottomrights, decimals=0).astype(np.int)
 
-            if self.angle == 90:
-                # ymin and ymax were switched by the rotation.
-                labels[:,[ymax,ymin]] = labels[:,[ymin,ymax]]
-            elif self.angle == 180:
-                # ymin and ymax were switched by the rotation,
-                # and also xmin and xmax were switched.
-                labels[:,[ymax,ymin]] = labels[:,[ymin,ymax]]
-                labels[:,[xmax,xmin]] = labels[:,[xmin,xmax]]
-            elif self.angle == 270:
-                # xmin and xmax were switched by the rotation.
-                labels[:,[xmax,xmin]] = labels[:,[xmin,xmax]]
+                if self.angle == 90:
+                    # ymin and ymax were switched by the rotation.
+                    labels[:,[ymax,ymin]] = labels[:,[ymin,ymax]]
+                elif self.angle == 180:
+                    # ymin and ymax were switched by the rotation,
+                    # and also xmin and xmax were switched.
+                    labels[:,[ymax,ymin]] = labels[:,[ymin,ymax]]
+                    labels[:,[xmax,xmin]] = labels[:,[xmin,xmax]]
+                elif self.angle == 270:
+                    # xmin and xmax were switched by the rotation.
+                    labels[:,[xmax,xmin]] = labels[:,[xmin,xmax]]
 
             return image, labels
 

@@ -322,8 +322,9 @@ class CropPad:
         if not (labels is None):
 
             # Translate the box coordinates to the patch's coordinate system.
-            labels[:, [ymin, ymax]] -= patch_ymin
-            labels[:, [xmin, xmax]] -= patch_xmin
+            if np.any(labels):
+                labels[:, [ymin, ymax]] -= patch_ymin
+                labels[:, [xmin, xmax]] -= patch_xmin
 
             # Compute all valid boxes for this patch.
             if not (self.box_filter is None):
@@ -332,7 +333,7 @@ class CropPad:
                                          image_height=self.patch_height,
                                          image_width=self.patch_width)
 
-            if self.clip_boxes:
+            if self.clip_boxes and np.any(labels):
                 labels[:,[ymin,ymax]] = np.clip(labels[:,[ymin,ymax]], a_min=0, a_max=self.patch_height-1)
                 labels[:,[xmin,xmax]] = np.clip(labels[:,[xmin,xmax]], a_min=0, a_max=self.patch_width-1)
 
@@ -538,8 +539,9 @@ class RandomPatch:
                 else:
                     # Translate the box coordinates to the patch's coordinate system.
                     new_labels = np.copy(labels)
-                    new_labels[:, [ymin, ymax]] -= patch_ymin
-                    new_labels[:, [xmin, xmax]] -= patch_xmin
+                    if np.any(labels):
+                        new_labels[:, [ymin, ymax]] -= patch_ymin
+                        new_labels[:, [xmin, xmax]] -= patch_xmin
                     # Check if the patch is valid.
                     if self.image_validator(labels=new_labels,
                                             image_height=patch_height,
@@ -718,8 +720,9 @@ class RandomPatchInf:
                     else:
                         # Translate the box coordinates to the patch's coordinate system.
                         new_labels = np.copy(labels)
-                        new_labels[:, [ymin, ymax]] -= patch_ymin
-                        new_labels[:, [xmin, xmax]] -= patch_xmin
+                        if np.any(labels):
+                            new_labels[:, [ymin, ymax]] -= patch_ymin
+                            new_labels[:, [xmin, xmax]] -= patch_xmin
                         # Check if the patch contains the minimum number of boxes we require.
                         if self.image_validator(labels=new_labels,
                                                 image_height=patch_height,
